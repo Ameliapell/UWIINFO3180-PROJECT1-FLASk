@@ -2,11 +2,14 @@
 Flask Documentation:     https://flask.palletsprojects.com/
 Jinja2 Documentation:    https://jinja.palletsprojects.com/
 Werkzeug Documentation:  https://werkzeug.palletsprojects.com/
-This file contains the routes for your application.
+This file creates your application.
 """
-
 from app import app
-from flask import render_template, request, redirect, url_for
+from flask import render_template, request, redirect, url_for, flash, session, abort, send_from_directory
+import os
+from app import app, db
+from .models import Property
+from .forms import PropertyForm
 
 
 ###
@@ -22,9 +25,90 @@ def home():
 @app.route('/about/')
 def about():
     """Render the website's about page."""
-    return render_template('about.html', name="Mary Jane")
+    return render_template('about.html', name="AMELIA PELLINGTON")
 
 
+
+
+#/properties/create
+
+@app.route('/properties/create', methods=['POST', 'GET'])
+def properties_create():
+   
+    # Instantiate your form class
+    form = ContactForm()
+    filefolder = '/uploads'
+    # Validate file upload on submit
+    if request.method == 'POST':
+        # Get file data and save to your uploads folder
+        if form.validate_on_submit():  
+            property_title = form.title.data
+            description = form.description.data
+            num_of_bedrooms= form.rooms.data
+            num_of_bathrooms = form.bathrooms.data
+            price = form.price.data
+            location = form.location.data
+            property_type = form.property_type.data
+
+            photo = form.photo.data            
+            filename = secure_filename(photo.filename)
+            photo.save(os.path.join(os.getcwd(),'app/uploads/', filename)) 
+
+
+            
+            property = PropertyModel(
+                title=property_title,
+                description=description,
+                number_of_bedrooms=number_of_bedrooms,
+                number_of_bathrooms=number_of_bathrooms,
+                price=price,
+                location=location,
+                property_type=property_type,
+                property_name=filename
+            )
+            db.session.add(property)
+            db.session.commit()
+
+            flash('You property data has been successfully uploaded', 'success')
+            return redirect(url_for('properties'))
+    return render_template('properties_create.html', form= form)
+
+#properties
+
+@app.route('/properties')
+def properties():
+    properties = PropertyModel.query.all()
+    return render_template('properties.html', properties= properties)
+
+
+
+@app.route('/properties/<propertyid>')
+def get_image(propertyid): 
+    filepath = os.path.join(os.getcwd(),'app/uploads/')
+    return send_from_directory( filepath,propertyid)
+
+@app.route('/property/<propertyid>')
+def property(propertyid): 
+    search = PropertyModel.query.filter_by(title=propertyid).first()  
+    return render_template('property.html',search=search) 
+    
+
+
+def get_uploaded_images():
+    image_list=[]
+    rootdir = os.getcwd()
+    if platform=="win32":
+        for subdir, dirs, files in os.walk(rootdir + '\\uploads'):
+            for file in files:
+                image_list+=[file]
+            return image_list
+        return image_list
+    else:
+        for subdir, dirs, files in os.walk(rootdir + '/uploads'):
+            for file in files:
+                image_list+=[file]
+            return image_list
+        return image_list     
 ###
 # The functions below should be applicable to all Flask apps.
 ###
@@ -61,3 +145,9 @@ def add_header(response):
 def page_not_found(error):
     """Custom 404 page."""
     return render_template('404.html'), 404
+
+
+
+
+if __name__ == '__main__':
+    app.run(debug=True,host="0.0.0.0",port="8080")
