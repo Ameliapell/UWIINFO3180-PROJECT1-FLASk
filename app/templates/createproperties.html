@@ -1,53 +1,53 @@
 {% extends "base.html" %}
 
-
 {% block main %}
-<h1>Add New Property</h1>
-<div class="add" id="form">
-    
+    <h1>Add New Property</h1>
+    {% include 'flash_messages.html' %}
+    <br>
+    <form action="{{ url_for('create_property') }}" enctype="multipart/form-data" method="post" >
+        {{ form.csrf_token }}
 
-<form action="{{ url_for('properties_create') }}" enctype="multipart/form-data" method="POST">
+        <div class="form-group">
+          <label for="title" class="inpuLabel">{{ form.title.label }}</label>
+          {{ form.title }}
+        </div>
 
-    {{ form.csrf_token }}
-    
-    <div class="info" >
-    <h6>{{ form.title.label }}</h6>
-    <p>{{ form.title(required='required',size=60) }}</p>
-</div>
+        <div class="form-group">
+          <label for="description" class="inpuLabel">{{ form.description.label }}</label>
+          {{ form.description }}
+        </div>
 
-    <div class="info">
-    <h6>{{ form.description.label }} </h6>
-    <p>{{ form.description(required='required',cols=62,rows=6) }}</p>
+        <div class="sidebysidegroup">
+            <div class="form-group">
+              <label for="number_of_bedrooms" class="inpuLabel">{{ form.num_of_bedrooms.label }}</label>
+              {{ form.number_of_bedrooms }}
+            </div>
+            <div class="form-group">
+              <label for="number_of_bathrooms" class="inpuLabel">{{ form.num_of_bathrooms.label }}</label>
+              {{ form.number_of_bathrooms }}
+            </div>
+            <div class="form-group">
+              <label for="price" class="inpuLabel">{{ form.price.label }}</label>
+              {{ form.price }}
+            </div>
+            <div class="form-group">
+              <label for="type" class="inpuLabel">{{ form.type.label }}</label>
+              {{ form.type }}
+            </div>
+        </div>
 
-</div>
-    <div class="info">
-    <h6>{{ form.number_of_bedrooms.label }}<span id="bath">{{ form.number_of_bathrooms.label }} </span></h6>
-    <p>{{ form.number_bedrooms(required='required',size=60, placeholder="3") }}<span id="bathnum">{{ form.bathrooms(required='required',size=60, placeholder="2") }}</span></p>
-</div>
+        <br>
+        <div class="form-group">
+          <label for="location" class="inpuLabel">{{ form.location.label }}</label>
+          {{ form.location }}
+        </div>
 
-    <div class="info">
-    
-    
-    </div>
-
-    <div class="info">
-        <h6>{{ form.price.label }} <span id="type">{{ form.property_type.label }}</span></h6>
-        <p>{{ form.price(required='required',size=50,placeholder="15,000,000") }}<span id="typenum">{{ form.property_type(required='required',size=1) }}</span></p>
-    </div>
-
-        <div class="info">
-        <h6>{{ form.location.label }}</h6>
-        <p>{{ form.location(required='required',size=60,placeholder="10 Waterloo Rd") }}</p>
-    </div>
-
-      
-
-        <div class="info">
-        <h6>{{ form.photo.label }}</h6>
-        {{form.photo(class="upload")}}
-        </div> 
-        
-    <button class="send bg-primary info" type="submit">Add Property</button>
-
-    </form></div>
+        <br>
+        <div class="form-group">
+          <label for="photo" class="inpuLabel">{{ form.photo.label }}</label>
+          {{ form.photo }}
+        </div>
+        <button type="submit">Add Property</button>
+        <br>
+    </form>
 {% endblock %}

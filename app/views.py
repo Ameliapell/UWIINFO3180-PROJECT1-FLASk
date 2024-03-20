@@ -8,9 +8,8 @@ from app import app
 from flask import render_template, request, redirect, url_for, flash, session, abort, send_from_directory
 import os
 from app import app, db
-from .models import Property
-from .forms import PropertyForm
-
+from app.models import Property
+from app.forms import PropertyForm
 
 ###
 # Routing for your application.
@@ -36,7 +35,7 @@ def about():
 def properties_create():
    
     # Instantiate your form class
-    form = ContactForm()
+    form = PropertyForm()
     filefolder = '/uploads'
     # Validate file upload on submit
     if request.method == 'POST':
@@ -44,8 +43,8 @@ def properties_create():
         if form.validate_on_submit():  
             property_title = form.title.data
             description = form.description.data
-            num_of_bedrooms= form.rooms.data
-            num_of_bathrooms = form.bathrooms.data
+            number_of_bedrooms= form.rooms.data
+            number_of_bathrooms = form.bathrooms.data
             price = form.price.data
             location = form.location.data
             property_type = form.property_type.data
